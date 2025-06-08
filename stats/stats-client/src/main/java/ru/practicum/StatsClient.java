@@ -1,10 +1,14 @@
 package ru.practicum;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
@@ -15,8 +19,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
+@Service
 public class StatsClient {
     private final RestTemplate rest;
+    private final ObjectMapper objectMapper;
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern(DateTimeUtil.DATE_PATTERN);
 
 
@@ -25,20 +31,36 @@ public class StatsClient {
                 .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
                 .requestFactory(() -> new HttpComponentsClientHttpRequestFactory())
                 .build();
+        this.objectMapper = new ObjectMapper();
     }
 
-    public ResponseEntity<Object> saveHit(EndpointHitSaveDto hitSaveDto) {
-        return makeAndSendRequest(HttpMethod.POST, "/hit", null, hitSaveDto);
+    public void saveHit(EndpointHitSaveDto hitSaveDto) {
+        makeAndSendRequest(HttpMethod.POST, "/hit", null, hitSaveDto);
     }
 
-    public ResponseEntity<Object> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
+    public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
         Map<String, Object> parameters = Map.of(
                 "start", start.format(FORMATTER),
                 "end", end.format(FORMATTER),
                 "uris", String.join(",", uris),
                 "unique", unique);
-        return makeAndSendRequest(HttpMethod.GET, "/stats?start={start}&end={end}&uris={uris}&unique={unique}",
-                parameters, null);
+        ResponseEntity<Object> responseEntity = makeAndSendRequest(
+                HttpMethod.GET,
+                "/stats?start={start}&end={end}&uris={uris}&unique={unique}",
+                parameters,
+                null
+        );
+        try {
+            if (responseEntity.getBody() == null) {
+                throw new IllegalStateException("Empty response body from stats service");
+            }
+            return objectMapper.readValue(
+                    objectMapper.writeValueAsString(responseEntity.getBody()), new TypeReference<>() {
+                    }
+            );
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Failed to process stats response");
+        }
     }
 
     private <T> ResponseEntity<Object> makeAndSendRequest(HttpMethod method, String path,

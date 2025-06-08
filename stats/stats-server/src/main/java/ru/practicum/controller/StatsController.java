@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.EndpointHitDto;
 import ru.practicum.EndpointHitSaveDto;
 import ru.practicum.ViewStatsDto;
+import ru.practicum.exception.InvalidDateException;
 import ru.practicum.service.StatsService;
 import ru.practicum.util.DateTimeUtil;
 
@@ -38,6 +39,11 @@ public class StatsController {
             @RequestParam(required = false) List<String> uris,
             @RequestParam(defaultValue = "false") Boolean unique
     ) {
+        if (start != null && end != null) {
+            if (end.isBefore(start)) {
+                throw new InvalidDateException("End date can't be before start date");
+            }
+        }
         log.info("Get statistics - start: {}, end: {}, uris: {}, unique: {}", start, end, uris, unique);
         return statsService.getStats(start, end, uris, unique);
     }
