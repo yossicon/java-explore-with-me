@@ -21,14 +21,14 @@ public class CompilationPublicController {
     public List<CompilationDto> getCompilations(@RequestParam(defaultValue = "false") Boolean pinned,
                                                 @RequestParam(defaultValue = "0") Integer from,
                                                 @RequestParam(defaultValue = "10") Integer size) {
-        log.info("Get compilations - pinned: {}, from: {}, size: {}", pinned, from, size);
+        log.info("GET /compilations, pinned: {}, from: {}, size: {}", pinned, from, size);
         return compilationService.getCompilations(pinned, from, size);
     }
 
     @GetMapping("/{compilationId}")
     @ResponseStatus(HttpStatus.OK)
     public CompilationDto getCompilationById(@PathVariable Long compilationId) {
-        log.info("Get compilation by id {}", compilationId);
+        log.info("GET /compilations/{compilationId}, compilationId: {}", compilationId);
         return compilationService.getCompilationById(compilationId);
     }
 }

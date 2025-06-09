@@ -10,7 +10,6 @@ import ru.practicum.ewm.enums.State;
 import ru.practicum.ewm.event.dto.EventDto;
 import ru.practicum.ewm.event.dto.EventUpdateAdminDto;
 import ru.practicum.ewm.event.service.EventService;
-import ru.practicum.ewm.exception.InvalidDateException;
 import ru.practicum.util.DateTimeUtil;
 
 import java.time.LocalDateTime;
@@ -36,15 +35,8 @@ public class EventAdminController {
                                     LocalDateTime rangeEnd,
                                     @RequestParam(defaultValue = "0") Integer from,
                                     @RequestParam(defaultValue = "10") Integer size) {
-        log.info("Get events - users: {}, states: {}, categories: {}, rangeStart: {}, rangeEnd: {}, from: {}, size: {}",
+        log.info("GET /admin/events, users: {}, states: {}, categories: {}, range: {}-{}, from: {}, size: {}",
                 users, states, categories, rangeStart, rangeEnd, from, size);
-
-        if (rangeStart != null && rangeEnd != null) {
-            if (rangeEnd.isBefore(rangeStart)) {
-                throw new InvalidDateException("End date can't be before start date");
-            }
-        }
-
         return eventService.getEventsByAdmin(users, states, categories, rangeStart, rangeEnd, from, size);
     }
 
@@ -52,9 +44,8 @@ public class EventAdminController {
     @ResponseStatus(HttpStatus.OK)
     public EventDto updateEvent(@PathVariable Long eventId,
                                 @RequestBody @Valid EventUpdateAdminDto eventUpdateDto) {
-        log.info("Update event by admin {}", eventUpdateDto);
+        log.info("PATCH /admin/events/{eventId} {}", eventUpdateDto);
         EventDto eventDto = eventService.updateEventByAdmin(eventId, eventUpdateDto);
-        log.info("Event updated successfully, eventDto: {}", eventDto);
         return eventDto;
     }
 }

@@ -10,7 +10,6 @@ import ru.practicum.ewm.enums.Sort;
 import ru.practicum.ewm.event.dto.EventDto;
 import ru.practicum.ewm.event.dto.EventShortDto;
 import ru.practicum.ewm.event.service.EventService;
-import ru.practicum.ewm.exception.InvalidDateException;
 import ru.practicum.util.DateTimeUtil;
 
 import java.time.LocalDateTime;
@@ -39,17 +38,9 @@ public class EventPublicController {
                                             @RequestParam(defaultValue = "0") Integer from,
                                             @RequestParam(defaultValue = "10") Integer size,
                                             HttpServletRequest request) {
-        log.info("Search events - text: {}, categories: {}, paid: {}, rangeStart: {}, rangeEnd{}, onlyAvailable: {}",
-                text, categories, paid, rangeStart, rangeEnd, onlyAvailable);
-        log.info("Client ip: {}", request.getRemoteAddr());
-        log.info("Endpoint path: {}", request.getRequestURI());
-
-        if (rangeStart != null && rangeEnd != null) {
-            if (rangeEnd.isBefore(rangeStart)) {
-                throw new InvalidDateException("End date can't be before start date");
-            }
-        }
-
+        log.info("GET /events, text: {}, categories: {}, paid: {}, range: {}-{}, available: {}, ip: {}, path: {}",
+                text, categories, paid, rangeStart, rangeEnd, onlyAvailable,
+                request.getRemoteAddr(), request.getRequestURI());
         return eventService.searchEvents(text, categories, paid, rangeStart, rangeEnd,
                 onlyAvailable, sort, from, size, request);
     }
@@ -57,9 +48,8 @@ public class EventPublicController {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public EventDto getEventById(@PathVariable Long id, HttpServletRequest request) {
-        log.info("Get event with id: {}", id);
-        log.info("Client ip: {}", request.getRemoteAddr());
-        log.info("Endpoint path: {}", request.getRequestURI());
+        log.info("GET /events/{id}, id: {}, client ip: {}, endpoint path: {}",
+                id, request.getRemoteAddr(), request.getRequestURI());
         return eventService.getEventById(id, request);
     }
 }

@@ -23,16 +23,14 @@ public class RequestPrivateController {
     @ResponseStatus(HttpStatus.CREATED)
     public ParticipationRequestDto addRequest(@PathVariable Long userId,
                                               @RequestParam Long eventId) {
-        log.info("Save participation request, userId: {}, eventId: {}", userId, eventId);
-        ParticipationRequestDto requestDto = requestService.addRequest(userId, eventId);
-        log.info("Participation request saved successfully, requestDto: {}", requestDto);
-        return requestDto;
+        log.info("POST /users/{userId}/requests, userId: {}, eventId: {}", userId, eventId);
+        return requestService.addRequest(userId, eventId);
     }
 
     @GetMapping("/requests")
     @ResponseStatus(HttpStatus.OK)
     public List<ParticipationRequestDto> getUserRequests(@PathVariable Long userId) {
-        log.info("Get requests by user with id: {}", userId);
+        log.info("GET /users/{userId}/requests, userId: {}", userId);
         return requestService.getUserRequests(userId);
     }
 
@@ -40,7 +38,7 @@ public class RequestPrivateController {
     @ResponseStatus(HttpStatus.OK)
     public ParticipationRequestDto cancelRequest(@PathVariable Long userId,
                                                  @PathVariable Long requestId) {
-        log.info("Cancel request, requestId: {}", requestId);
+        log.info("PATCH /users/{userId}/requests/{requestId}/cancel, userId: {}, requestId: {}", userId, requestId);
         return requestService.cancelRequest(userId, requestId);
     }
 
@@ -48,7 +46,7 @@ public class RequestPrivateController {
     @ResponseStatus(HttpStatus.OK)
     public List<ParticipationRequestDto> getUserEventRequests(@PathVariable Long userId,
                                                               @PathVariable Long eventId) {
-        log.info("Get requests in user's event with id: {}, userId: {}", eventId, userId);
+        log.info("GET /users/{userId}/events/{eventId}/requests, userId: {}, eventId: {}", userId, eventId);
         return requestService.getUserEventRequests(userId, eventId);
     }
 
@@ -57,7 +55,7 @@ public class RequestPrivateController {
     public EventRequestStatusUpdateResult moderateRequests(@PathVariable Long userId,
                                                            @PathVariable Long eventId,
                                                            @RequestBody @Valid EventRequestStatusUpdateRequest request) {
-        log.info("Moderate requests in user's event with id: {}, userId: {}", eventId, userId);
+        log.info("PATCH /users/{userId}/events/{eventId}/requests, userId: {}, eventId: {}", userId, eventId);
         return requestService.moderateRequests(userId, eventId, request);
     }
 }

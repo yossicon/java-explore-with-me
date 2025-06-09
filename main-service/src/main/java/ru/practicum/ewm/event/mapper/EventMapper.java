@@ -8,10 +8,8 @@ import ru.practicum.util.DateTimeUtil;
 @Mapper(componentModel = "spring")
 public interface EventMapper {
     @Mapping(target = "category", ignore = true)
-        //@Mapping(target = "eventDate", source = "eventDate", dateFormat = DateTimeUtil.DATE_PATTERN)
     Event mapToEvent(EventSaveDto eventSaveDto);
 
-    //@Mapping(target = "eventDate", source = "eventDate", dateFormat = DateTimeUtil.DATE_PATTERN)
     @Mapping(target = "createdOn", source = "createdOn", dateFormat = DateTimeUtil.DATE_PATTERN)
     EventDto mapToEventDto(Event event);
 

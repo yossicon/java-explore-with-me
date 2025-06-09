@@ -1,6 +1,7 @@
 package ru.practicum.ewm.compilation.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.compilation.dto.CompilationDto;
@@ -20,6 +21,7 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CompilationServiceImpl implements CompilationService {
     private final CompilationRepository compilationRepository;
     private final EventRepository eventRepository;
@@ -28,6 +30,7 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     @Transactional
     public CompilationDto addCompilation(CompilationSaveDto compilationSaveDto) {
+        log.info("Saving compilation");
         Compilation compilation = compilationMapper.mapToCompilation(compilationSaveDto);
 
         if (compilationSaveDto.getPinned() == null) {
@@ -40,11 +43,14 @@ public class CompilationServiceImpl implements CompilationService {
         } else {
             compilation.setEvents(Collections.emptySet());
         }
-        return compilationMapper.mapToCompilationDto(compilationRepository.save(compilation));
+        CompilationDto compilationDto = compilationMapper.mapToCompilationDto(compilationRepository.save(compilation));
+        log.info("Compilation saved successfully, compilationDto: {}", compilationDto);
+        return compilationDto;
     }
 
     @Override
     public List<CompilationDto> getCompilations(Boolean pinned, Integer from, Integer size) {
+        log.info("Search compilations");
         List<Compilation> compilations;
 
         if (pinned) {
@@ -52,6 +58,7 @@ public class CompilationServiceImpl implements CompilationService {
         } else {
             compilations = compilationRepository.findCompilationLimited(from, size);
         }
+        log.info("{} compilations were found", compilations.size());
         return compilations.stream()
                 .map(compilationMapper::mapToCompilationDto)
                 .toList();
@@ -60,12 +67,15 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     public CompilationDto getCompilationById(Long compilationId) {
-        return compilationMapper.mapToCompilationDto(findCompilationById(compilationId));
+        CompilationDto compilationDto = compilationMapper.mapToCompilationDto(findCompilationById(compilationId));
+        log.info("Compilation was found successfully, compilationDto: {}", compilationDto);
+        return compilationDto;
     }
 
     @Override
     @Transactional
     public CompilationDto updateCompilation(Long compilationId, CompilationUpdateDto compilationUpdateDto) {
+        log.info("Updating compilation");
         Compilation compilation = findCompilationById(compilationId);
 
         if (compilationUpdateDto.getEvents() != null) {
@@ -78,19 +88,26 @@ public class CompilationServiceImpl implements CompilationService {
         if (compilationUpdateDto.getTitle() != null && !compilationUpdateDto.getTitle().isBlank()) {
             compilation.setTitle(compilationUpdateDto.getTitle());
         }
-        return compilationMapper.mapToCompilationDto(compilation);
+        CompilationDto compilationDto = compilationMapper.mapToCompilationDto(compilation);
+        log.info("Compilation updated successfully, compilationDto: {}", compilationDto);
+        return compilationDto;
     }
 
     @Override
     @Transactional
     public void deleteCompilation(Long compilationId) {
+        log.info("Deleting compilation");
         findCompilationById(compilationId);
         compilationRepository.deleteById(compilationId);
+        log.info("Compilation with id {} deleted successfully", compilationId);
     }
 
     private Compilation findCompilationById(Long compilationId) {
         return compilationRepository.findById(compilationId)
-                .orElseThrow(() -> new NotFoundException(String.format("Compilation with id %d not found",
-                        compilationId)));
+                .orElseThrow(() -> {
+                    log.warn("Compilation with id {} not found", compilationId);
+                    return new NotFoundException(String.format("Compilation with id %d not found",
+                            compilationId));
+                });
     }
 }

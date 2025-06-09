@@ -23,10 +23,8 @@ public class EventPrivateController {
     @ResponseStatus(HttpStatus.CREATED)
     public EventDto addEvent(@PathVariable Long userId,
                              @RequestBody @Valid EventSaveDto eventSaveDto) {
-        log.info("Save event {}", eventSaveDto);
-        EventDto eventDto = eventService.addEvent(userId, eventSaveDto);
-        log.info("Event saved successfully, eventDto: {}", eventDto);
-        return eventDto;
+        log.info("POST /users/{userId}/events {}", eventSaveDto);
+        return eventService.addEvent(userId, eventSaveDto);
     }
 
     @GetMapping
@@ -34,7 +32,7 @@ public class EventPrivateController {
     public List<EventDto> getUserEvents(@PathVariable Long userId,
                                         @RequestParam(defaultValue = "0") Integer from,
                                         @RequestParam(defaultValue = "10") Integer size) {
-        log.info("Get events - userId: {}, from: {}, size: {}", userId, from, size);
+        log.info("GET /users/{userId}/events, userId: {}, from: {}, size: {}", userId, from, size);
         return eventService.getUserEvents(userId, from, size);
     }
 
@@ -42,7 +40,7 @@ public class EventPrivateController {
     @ResponseStatus(HttpStatus.OK)
     public EventDto getEventById(@PathVariable Long userId,
                                  @PathVariable Long eventId) {
-        log.info("Get user event by id {}", eventId);
+        log.info("GET /users/{userId}/events/{eventId}, eventId {}", eventId);
         return eventService.getUserEventById(userId, eventId);
     }
 
@@ -51,9 +49,7 @@ public class EventPrivateController {
     public EventDto updateEvent(@PathVariable Long userId,
                                 @PathVariable Long eventId,
                                 @RequestBody @Valid EventUpdateUserDto eventUpdateDto) {
-        log.info("Update event {}", eventUpdateDto);
-        EventDto eventDto = eventService.updateEventByUser(userId, eventId, eventUpdateDto);
-        log.info("Event updated successfully, eventDto: {}", eventDto);
-        return eventDto;
+        log.info("PATCH /users/{userId}/events/{eventId} {}", eventUpdateDto);
+        return eventService.updateEventByUser(userId, eventId, eventUpdateDto);
     }
 }

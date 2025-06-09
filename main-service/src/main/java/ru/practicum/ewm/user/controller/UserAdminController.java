@@ -21,10 +21,8 @@ public class UserAdminController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto addUser(@RequestBody @Valid UserSaveDto userSaveDto) {
-        log.info("Save user {}", userSaveDto);
-        UserDto userDto = userService.addUser(userSaveDto);
-        log.info("User saved successfully, userDto: {}", userDto);
-        return userDto;
+        log.info("POST /admin/users {}", userSaveDto);
+        return userService.addUser(userSaveDto);
     }
 
     @GetMapping
@@ -32,14 +30,14 @@ public class UserAdminController {
     public List<UserDto> getUsers(@RequestParam(required = false) List<Long> ids,
                                   @RequestParam(defaultValue = "0") Integer from,
                                   @RequestParam(defaultValue = "10") Integer size) {
-        log.info("Get users - ids: {}, from: {}, size: {}", ids, from, size);
+        log.info("GET /admin/users, ids: {}, from: {}, size: {}", ids, from, size);
         return userService.getUsers(ids, from, size);
     }
 
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable Long userId) {
-        log.info("Delete user with id {}", userId);
+        log.info("DELETE /admin/users/{userId}, userId: {}", userId);
         userService.deleteUser(userId);
     }
 

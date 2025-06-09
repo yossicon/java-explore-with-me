@@ -19,26 +19,22 @@ public class CategoryAdminController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CategoryDto addCategory(@RequestBody @Valid CategorySaveDto categorySaveDto) {
-        log.info("Save category {}", categorySaveDto);
-        CategoryDto categoryDto = categoryService.addCategory(categorySaveDto);
-        log.info("Category saved successfully, categoryDto: {}", categoryDto);
-        return categoryDto;
+        log.info("POST /admin/categories {}", categorySaveDto);
+        return categoryService.addCategory(categorySaveDto);
     }
 
     @PatchMapping("/{categoryId}")
     @ResponseStatus(HttpStatus.OK)
     public CategoryDto updateCategory(@PathVariable Long categoryId,
                                       @RequestBody @Valid CategorySaveDto categorySaveDto) {
-        log.info("Update category {}", categorySaveDto);
-        CategoryDto categoryDto = categoryService.updateCategory(categoryId, categorySaveDto);
-        log.info("Category updated successfully, categoryDto: {}", categoryDto);
-        return categoryDto;
+        log.info("PATCH /admin/categories/{categoryId} {}", categorySaveDto);
+        return categoryService.updateCategory(categoryId, categorySaveDto);
     }
 
     @DeleteMapping("/{categoryId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCategory(@PathVariable Long categoryId) {
-        log.info("Delete category with id {}", categoryId);
+        log.info("DELETE /admin/categories/{categoryId, categoryId {}", categoryId);
         categoryService.deleteCategoryById(categoryId);
     }
 }

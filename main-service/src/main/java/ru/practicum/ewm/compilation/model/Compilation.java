@@ -15,7 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "events")
 public class Compilation {
 
     @Id
