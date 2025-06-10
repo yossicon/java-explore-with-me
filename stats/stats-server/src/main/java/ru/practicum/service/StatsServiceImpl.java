@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.EndpointHitDto;
 import ru.practicum.EndpointHitSaveDto;
 import ru.practicum.ViewStatsDto;
+import ru.practicum.exception.InvalidDateException;
 import ru.practicum.mapper.EndpointHitMapper;
 import ru.practicum.model.EndpointHit;
 import ru.practicum.repository.StatsRepository;
@@ -28,6 +29,12 @@ public class StatsServiceImpl implements StatsService {
 
     @Override
     public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
+        if (start != null && end != null) {
+            if (end.isBefore(start)) {
+                throw new InvalidDateException("End date can't be before start date");
+            }
+        }
+
         if (unique) {
             return statsRepository.findDistinctViewStats(start, end, uris);
         }
