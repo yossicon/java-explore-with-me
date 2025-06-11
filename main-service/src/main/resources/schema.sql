@@ -50,5 +50,12 @@ CREATE TABLE IF NOT EXISTS participation_requests (
     created TIMESTAMP,
     event_id BIGINT NOT NULL REFERENCES events(id),
     requester_id BIGINT NOT NULL REFERENCES users(id),
-    status varchar(50) NOT NULL
+    status varchar(50) NOT NULL,
+    is_public boolean
+);
+
+CREATE TABLE IF NOT EXISTS subscriptions (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    follower_id BIGINT NOT NULL REFERENCES users(id),
+    followed_id BIGINT NOT NULL REFERENCES users(id)
 );

@@ -22,9 +22,10 @@ public class RequestPrivateController {
     @PostMapping("/requests")
     @ResponseStatus(HttpStatus.CREATED)
     public ParticipationRequestDto addRequest(@PathVariable Long userId,
-                                              @RequestParam Long eventId) {
-        log.info("POST /users/{userId}/requests, userId: {}, eventId: {}", userId, eventId);
-        return requestService.addRequest(userId, eventId);
+                                              @RequestParam Long eventId,
+                                              @RequestParam(defaultValue = "true") Boolean isPublic) {
+        log.info("POST /users/{userId}/requests, userId: {}, eventId: {}, isPublic: {}", userId, eventId, isPublic);
+        return requestService.addRequest(userId, eventId, isPublic);
     }
 
     @GetMapping("/requests")
