@@ -34,7 +34,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     @Transactional
-    public ParticipationRequestDto addRequest(Long userId, Long eventId) {
+    public ParticipationRequestDto addRequest(Long userId, Long eventId, Boolean isPublic) {
         log.info("Saving participation request");
         User requester = findUserById(userId);
         Event event = findEventById(eventId);
@@ -59,6 +59,7 @@ public class RequestServiceImpl implements RequestService {
         participationRequest.setCreated(LocalDateTime.now());
         participationRequest.setEvent(event);
         participationRequest.setRequester(requester);
+        participationRequest.setIsPublic(isPublic);
 
         if (!event.getRequestModeration() || event.getParticipantLimit() == 0) {
             participationRequest.setStatus(State.CONFIRMED);
@@ -182,8 +183,8 @@ public class RequestServiceImpl implements RequestService {
     private void checkParticipantLimit(Event event) {
         Integer participantLimit = event.getParticipantLimit();
 
-        log.warn("Participant limit {} reached for eventId {}", participantLimit, event.getId());
         if (participantLimit != 0 && event.getConfirmedRequests() >= participantLimit) {
+            log.warn("Participant limit {} reached for eventId {}", participantLimit, event.getId());
             throw new ConflictException(String.format("Event with id %d has reached participant limit", event.getId()));
         }
     }

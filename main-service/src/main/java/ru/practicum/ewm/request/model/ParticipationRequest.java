@@ -37,4 +37,8 @@ public class ParticipationRequest {
     @NotNull(message = "Status must not be null")
     @Enumerated(EnumType.STRING)
     private State status;
+
+    @NotNull(message = "Is public must not be null")
+    @Column(name = "is_public")
+    private Boolean isPublic;
 }
