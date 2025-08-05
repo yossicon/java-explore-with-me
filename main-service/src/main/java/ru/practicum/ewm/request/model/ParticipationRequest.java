@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import ru.practicum.ewm.enums.State;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.user.model.User;
@@ -17,7 +16,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString(exclude = {"event", "requester"})
 public class ParticipationRequest {
 
     @Id
@@ -37,4 +35,20 @@ public class ParticipationRequest {
     @NotNull(message = "Status must not be null")
     @Enumerated(EnumType.STRING)
     private State status;
+
+    @NotNull(message = "Is public must not be null")
+    @Column(name = "is_public")
+    private Boolean isPublic;
+
+    @Override
+    public String toString() {
+        return "ParticipationRequest{" +
+                "id=" + id +
+                ", created=" + created +
+                ", eventId=" + event.getId() +
+                ", requesterId=" + requester.getId() +
+                ", status=" + status +
+                ", isPublic=" + isPublic +
+                '}';
+    }
 }

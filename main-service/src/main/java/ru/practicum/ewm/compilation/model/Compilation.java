@@ -5,9 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import ru.practicum.ewm.event.model.Event;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -15,7 +15,6 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString(exclude = "events")
 public class Compilation {
 
     @Id
@@ -34,4 +33,18 @@ public class Compilation {
             inverseJoinColumns = @JoinColumn(name = "event_id")
     )
     private Set<Event> events;
+
+    @Override
+    public String toString() {
+        return "Compilation{" +
+                "id=" + id +
+                ", pinned=" + pinned +
+                ", title='" + title + '\'' +
+                ", eventsIds=" + (events != null
+                ? events.stream()
+                .map(Event::getId)
+                .toList()
+                : List.of()) +
+                '}';
+    }
 }
