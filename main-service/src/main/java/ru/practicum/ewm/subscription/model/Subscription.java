@@ -4,14 +4,12 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import ru.practicum.ewm.user.model.User;
 
 @Entity
 @Table(name = "subscriptions")
 @Getter
 @Setter
-@ToString(exclude = {"follower", "followed"})
 public class Subscription {
 
     @Id
@@ -27,4 +25,13 @@ public class Subscription {
     @JoinColumn(name = "followed_id")
     @NotNull(message = "Followed must not be null")
     private User followed;
+
+    @Override
+    public String toString() {
+        return "Subscription{" +
+                "id=" + id +
+                ", followerId=" + follower.getId() +
+                ", followedId=" + followed.getId() +
+                '}';
+    }
 }

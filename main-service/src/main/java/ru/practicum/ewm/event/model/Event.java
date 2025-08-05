@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.enums.State;
 import ru.practicum.ewm.user.model.User;
@@ -19,7 +18,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString(exclude = {"category", "initiator", "location"})
 public class Event {
 
     @Id
@@ -72,4 +70,17 @@ public class Event {
 
     @NotBlank(message = "Event title must not be blank")
     private String title;
+
+    @Override
+    public String toString() {
+        return "Event{" +
+                "id=" + id +
+                ", categoryId=" + category.getId() +
+                ", eventDate=" + eventDate +
+                ", initiatorId=" + initiator.getId() +
+                ", locationId=" + location.getId() +
+                ", state=" + state +
+                ", title='" + title +
+                '}';
+    }
 }
